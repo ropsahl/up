@@ -1,0 +1,12 @@
+
+*.iml
+.idea/
+*.ipr
+*.iws
+
+## Plugin-specific files:
+
+# IntelliJ
+up-logs/
+node_modules/
+.idea_modules/
