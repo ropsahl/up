@@ -233,4 +233,13 @@ while True:
         time.sleep(3)
         route.restart(services)
 
+    newServices = scan_services(options[2], route_host)
+    for service in newServices:
+        found = False
+        for curr in services:
+            if service.name == curr.name:
+                found = True
+        if not found:
+            services.append(service)
+
     time.sleep(2)
