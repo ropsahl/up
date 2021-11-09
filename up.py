@@ -92,13 +92,15 @@ class UpService:
         return self.name + '.port=' + str(self.port)
 
     def has_stopped(self):
+        url = "http://127.0.0.1:" + str(self.port) + "/live"
         try:
-            v = requests.get("http://127.0.0.1:" + str(8200) + "/anypath")
-            if v.status_code < 500 and self.process is not None and self.process.poll() is None:
+            v = requests.get(url)
+            log_me("Checking live " + self.name + ":" + url + ", status_code: " + str(v.status_code))
+            if v.status_code < 500:
                 return False
+            log_me("Has_stopped " + self.name + ", port: " + str(self.port) + ", status_code: " + str(v.status_code))
         except Exception as e:
-            log_me("Has stopped: " + self.name + str(type(e)))
-        log_me("Has stopped: " + self.name + " process: " + str(self.process))
+            log_me("Has stopped " + self.name + ":" + url + ", Exception: " + str(type(e)))
         return True
 
     def stop(self):
@@ -227,6 +229,7 @@ for service in services:
 route.start()
 
 log_me("---------------- Start monitoring -----------------")
+time.sleep(15)
 while True:
     for service in services:
         if service.has_stopped():
