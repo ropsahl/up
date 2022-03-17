@@ -1,0 +1,16 @@
+<html>
+<header>
+    <script>
+      setInterval(async () => {
+        const response = await fetch('http://localhost:8080/time')
+        document.getElementById('time').innerHTML = await response.text()
+      },1000)
+    </script>
+</header>
+<body>
+
+<h1>Hello</h1>
+<h3>Time is</h3>
+<div id="time">??</div>
+</body>
+</html>

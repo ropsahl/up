@@ -18,18 +18,18 @@ function getService (name) {
   return argv.service[name]
 }
 
-function getServiceLinks () {
+function getServiceLinks (host) {
   let ret = '<html><body><h1>Router with following services</h1><ul>'
   for (let s in argv.service) {
-    ret += '<li><a href="/' + s + '">' + s + '</a></li>'
+    ret += '<li><a href="/' + s + '/live">' + s + '/live</a></li>'
   }
   return ret + '</body></html>'
-
 }
 
-const up_route = httpProxy.createProxyServer({})
+const proxy = httpProxy.createProxyServer({})
 
-console.log('Staring on port:' + argv.port)
+let ip = require('ip')
+console.log('Running on ' + ip.address() + ':' + argv.port)
 
 for (let s in argv.service) {
   console.log('Service:' + s)
@@ -40,7 +40,7 @@ http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token')
 
-  console.log('Request: ' + req.url)
+  console.log('DEBUG Request: ' + req.url)
   var url = req.url
   var serviceName = url.split('/')[1]
   var service = getService(serviceName)
@@ -50,13 +50,12 @@ http.createServer((req, res) => {
     req.url = url.substr(serviceName.length + 1)
   }
 
-  console.log('Call: ' + 'http://localhost:' + service.port + req.url)
-  up_route.web(req, res, { target: 'http://localhost:' + service.port })
-  /*{
-    up_route.web(req, res, { target: 'http://localhost:' + service.port })
-    res.setHeader('Content-type', 'text/html')
-    res.statusCode = 200
-    res.end(getServiceLinks())
-  }
-   */
+  req.addListener('end', function () {
+    if (service === undefined) {
+      res.write(getServiceLinks(ip.address() + ':' + argv.port))
+      res.end()
+    } else {
+      proxy.web(req, res, { target: 'http://localhost:' + service.port })
+    }
+  }).resume()
 }).listen(argv.port)

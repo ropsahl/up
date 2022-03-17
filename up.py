@@ -3,7 +3,6 @@ import getopt
 import glob
 import hashlib
 import os
-import signal
 import socket
 from subprocess import PIPE, Popen
 from threading import Thread
@@ -14,6 +13,7 @@ import time
 
 ARG_PORT = '--port='
 ARG_ROUTE_HOST = '--routerHost='
+LOG_LEVEL = 'INFO'
 
 if not os.path.exists("up-logs"):
     os.makedirs("up-logs")
@@ -21,9 +21,14 @@ if not os.path.exists("up-logs"):
 my_log_file = open("up-logs/up.log", "a")
 
 
-def log(log_file, name, line):
-    now = datetime.datetime.now()
-    log_file.write(str(now) + " " + name + ' ' + str(line) + "\n")
+def log(log_file, name, statement):
+    if isinstance(statement, bytes):
+        line = str(statement, 'utf-8', 'ignore')
+    else:
+        line = str(statement)
+    if line.startswith("DEBUG") and LOG_LEVEL != 'DEBUG':
+        return
+    log_file.write(str(datetime.datetime.now()) + " " + name + ' ' + line + "\n")
     log_file.flush()
 
 
@@ -95,7 +100,7 @@ class UpService:
         url = "http://127.0.0.1:" + str(self.port) + "/live"
         try:
             v = requests.get(url)
-            log_me("Checking live " + self.name + ":" + url + ", status_code: " + str(v.status_code))
+            log_me("DEBUG: Checking live " + self.name + ":" + url + ", status_code: " + str(v.status_code))
             if v.status_code < 500:
                 return False
             log_me("Has_stopped " + self.name + ", port: " + str(self.port) + ", status_code: " + str(v.status_code))
@@ -105,7 +110,7 @@ class UpService:
 
     def stop(self):
         log_me("--- STOPPING:     " + self.name + ", command: " + str(self.process.args))
-        self.process.send_signal(sig=signal.SIGTERM)
+        self.process.terminate()
 
     def start(self, new_port=False):
         command = self.get_command(new_port)
@@ -173,11 +178,17 @@ def scan_route(services, directory, port):
 
 def handle_config_change(running_services, configured_services):
     change = False
+    to_remove = []
     for running in running_services:
         if running not in configured_services:
-            log_me("Service changed or removed: " + running.get_name())
+            log_me("Stopping: " + running.get_name() + " Service changed or removed.")
             running.stop()
+            to_remove.append(running)
             change = True
+
+    for stopped in to_remove:
+        log_me("Removing: " + stopped.get_name())
+        running_services.remove(stopped)
 
     for configured in configured_services:
         if configured not in running_services:
