@@ -8,7 +8,7 @@ import requests
 
 @route('/live')
 def live():
-    return "Time flies"
+    return "Date is Live And Kicking"
 
 
 @route('/')
@@ -17,7 +17,7 @@ def time():
     try:
         v = requests.get(url)
         if v.status_code < 500:
-            return str(v.content, 'utf-8', 'ignore')[17:25]
+            return str(v.content, 'utf-8', 'ignore')[0:17]
     except Exception as e:
         print("Error:" + url + ", Exception: " + str(type(e)))
 

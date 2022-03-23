@@ -2,8 +2,10 @@
 <header>
     <script>
       setInterval(async () => {
-        const response = await fetch('http://localhost:8080/time')
-        document.getElementById('time').innerHTML = await response.text()
+        const time = await fetch('http://localhost:8080/time')
+        document.getElementById('time').innerHTML = await time.text()
+        const date = await fetch('http://localhost:8080/date')
+        document.getElementById('date').innerHTML = await date.text()
       },1000)
     </script>
 </header>
@@ -11,6 +13,8 @@
 
 <h1>Hello</h1>
 <h3>Time is</h3>
-<div id="time">??</div>
+<div id="time">...</div>
+<h3>Date is</h3>
+<div id="date">...</div>
 </body>
 </html>

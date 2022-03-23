@@ -20,6 +20,6 @@ echo '-------------------------' | $DIR/up-log.sh up.sh
 echo "python3 $CMDLINE" | $DIR/up-log.sh up.sh
 echo '-------------------------' | $DIR/up-log.sh up.sh
 
-python3 "CMDLINE" 2>&1 | $DIR/up-log.sh 'up.sh'
+python3 "$CMDLINE" 2>&1 | $DIR/up-log.sh 'up.sh'
 
 

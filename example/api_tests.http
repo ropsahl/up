@@ -1,9 +1,0 @@
-GET localhost:8080/time
-
-###
-GET localhost:8080/time/live
-
-###
-GET localhost:8080/time
-
-

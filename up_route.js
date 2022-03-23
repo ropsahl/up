@@ -18,7 +18,7 @@ function getService (name) {
   return argv.service[name]
 }
 
-function getServiceLinks (host) {
+function getServiceLinks () {
   let ret = '<html><body><h1>Router with following services</h1><ul>'
   for (let s in argv.service) {
     ret += '<li><a href="/' + s + '/live">' + s + '/live</a></li>'
@@ -52,7 +52,7 @@ http.createServer((req, res) => {
 
   req.addListener('end', function () {
     if (service === undefined) {
-      res.write(getServiceLinks(ip.address() + ':' + argv.port))
+      res.write(getServiceLinks())
       res.end()
     } else {
       proxy.web(req, res, { target: 'http://localhost:' + service.port })

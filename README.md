@@ -19,6 +19,12 @@
   - up.sh.log is log for the startup shell script and will hold log for up.py if it crash
   - Simple log filtering is available by setting LOG_LEVEL in up.py, default is INFO 
   - and messages starting with DEBUG will not be written by default.
+- The apps must
+  - read the commandline properties:
+    - ```--port=<port number>``` to listen on
+    - ```--routerHost=<address to router>``` address to router, where other services can be contacted
+  - answer on /live
+
 
 ##The up core apps:
 
