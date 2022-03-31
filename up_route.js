@@ -15,14 +15,23 @@ const argv = yargs
   .argv
 
 function getService (name) {
-  return argv.service[name]
+  console.log('getService: ' + name + ' hasOwnProperty:' + argv.hasOwnProperty(name))
+  if (name && argv?.service?.hasOwnProperty(name)) {
+    return argv.service[name]
+  }
+  return undefined
 }
 
 function getServiceLinks () {
-  let ret = '<html><body><h1>Router with following services</h1><ul>'
-  for (let s in argv.service) {
-    ret += '<li><a href="/' + s + '/live">' + s + '/live</a></li>'
+  let ret = '<html><meta http-equiv="refresh" content="3" /><body><h1>Up manage the following services:</h1><ul>'
+  if (argv.service && Object.keys(argv.service).length > 0) {
+    for (let s in argv.service) {
+      ret += '<li><a href="/' + s + '">' + s + '</a> <a href="/' + s + '/live">/live</a></li>'
+    }
+  } else {
+    ret += 'No services running'
   }
+
   return ret + '</body></html>'
 }
 

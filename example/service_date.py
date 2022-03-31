@@ -13,14 +13,13 @@ def live():
 
 @route('/')
 def time():
-    url = str(router_host(sys.argv[0]))+"/dateandtime"
     try:
+        url = str(router_host(sys.argv[0]))+"/dateandtime"
         v = requests.get(url)
         if v.status_code < 500:
             return str(v.content, 'utf-8', 'ignore')[0:17]
     except Exception as e:
-        print("Error:" + url + ", Exception: " + str(type(e)))
-
+        print("Exception: " + str(e))
     return "Oh noooo"
 
 
