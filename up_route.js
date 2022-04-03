@@ -15,7 +15,7 @@ const argv = yargs
   .argv
 
 function getService (name) {
-  console.log('getService: ' + name + ' hasOwnProperty:' + argv.hasOwnProperty(name))
+  console.log('DEBUG getService: ' + name + ' hasOwnProperty:' + argv.hasOwnProperty(name))
   if (name && argv?.service?.hasOwnProperty(name)) {
     return argv.service[name]
   }
